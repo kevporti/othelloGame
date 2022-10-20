@@ -1,0 +1,21 @@
+removerSecuenciaDeCaracteres: Se podria utilizar replace() en vez de strip() para evitar saltos de linea indeseados en el medio de palabras.
+Tambien se podria agregar que busque tabulaciones para evitar lo mismo.
+
+definirJugadoresYColores: Habria que checkear que las primeras dos lineas tienen el formato de "nombreDelJugador,color", evitando espacios o 
+separaciones diferentes ya que este es el formato predefinido en el tp, y que la tercer linea sea la del color inicial
+
+definirJugadas: Checkear que el formato de las jugadas sea el correcto a la hora de leer las mismas, que tengan la forma de LETRANUMERO y no
+de NUMEROLETRA o algo diferente. Aplicar caso de que haya una jugada skippeada.
+
+desestructurarArchivo: Cambiar el formato de apertura de archivo a uno que pregunte el nombre del archivo a testear, y que pida un tipo de
+archivo de formato .txt para evitar que el codigo sea manipulado.
+
+desestructurarJugada: Agregar caso de que la jugada sea skippeada o la jugada no este dentro de los parametros del tablero (AKA que los indices en
+los que se separan las jugadas esten entre 0 y 7)
+
+controlarJugadasValidas: Revisar flujo de la funcion.
+
+simularJuego: En el if que aplica las reglas se verifica si "el color de la jugada no es un string vacio", cosa que si es una jugada skippeada,
+eso se guarda en una tupla y siempre se le asigna un color a cada jugada (por mas que haya sido skippeada). Lo que "aparece" como string vacio es
+la posicion de la jugada, y tampoco eso porque hay que ver la reaccion de la funcion removerSecuenciaDeCaracteres cuando en el mismo string solamente
+aparezca el '\n'. Devuelve un string vacio o se procesa como error?

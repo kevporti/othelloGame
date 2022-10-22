@@ -34,9 +34,9 @@ def leerJugadas(archivo, colorInicial: str) -> list[tuple[str, str]]:
   return jugadas
 
 # Abre el archivo y declara las variables de los jugadores, las jugadas y el color inicial, luego cierra el archivo.
-# leerArchivoEntrada: None -> Tuple[Dict[String, String], List[Tuple[String, String]]]
-def leerArchivoEntrada() -> tuple[dict[str, str], list[tuple[str, str]]]:
-  archivo = open('juegoParadoPorDobleSkipGanadorB.txt', 'r')
+# leerArchivoEntrada: String -> Tuple[Dict[String, String], List[Tuple[String, String]]]
+def leerArchivoEntrada(nombreArchivo: str) -> tuple[dict[str, str], list[tuple[str, str]]]:
+  archivo = open(nombreArchivo, 'r')
 
   (jugadores, colorInicial) = leerColoresYJugadores(archivo)
   jugadas = leerJugadas(archivo, colorInicial)
@@ -131,7 +131,6 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> No
     if jugada[1] != '':
       # Controlar reglas si no se salteo
       controlarJugadaRepetida(tablero, jugada)
-      controlarJugadaRepetida(tablero, jugada)
       controlarJugadasValidas(tablero, jugada)
       aplicarJugada(tablero, jugada)
     else:
@@ -179,18 +178,23 @@ def construirTableroInicial() -> list[list[str]]:
 # se le informa al usuario y se muestra el tablero anterior a esa jugada, si no, se muestra el tablero final con el ganador.
 # main: None -> None
 def main() -> None:
-  tablero = construirTableroInicial()
-  _, jugadas = leerArchivoEntrada()
-
+  nombreArchivo = input('Ingrese el nombre del archivo de entrada: ')
   try:
-    simularJuego(tablero, jugadas)
-  except Exception as e:
-    imprimirTablero(tablero)
-    print(str(e))
+    _, jugadas = leerArchivoEntrada(nombreArchivo)
+  except FileNotFoundError:
+    print('El archivo no existe')
   else:
-    imprimirTablero(tablero)
-    determinarGanador(tablero)
-    # mostrar ganador
+    tablero = construirTableroInicial()
+
+    try:
+      simularJuego(tablero, jugadas)
+    except Exception as e:
+      imprimirTablero(tablero)
+      print(str(e))
+    else:
+      imprimirTablero(tablero)
+      determinarGanador(tablero)
+      # mostrar ganador
 
 # No ejecutar codigo al importar funciones desde este archivo
 if __name__ == '__main__':

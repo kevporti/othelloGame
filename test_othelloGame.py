@@ -21,7 +21,7 @@ def test_leerJugadas():
   archivo.close()
 
 def test_leerArchivoEntrada():
-  assert leerArchivoEntrada() == ({'N': 'Kevin', 'B': 'Juan'}, [('N', 'D3'), ('B', 'E3'), ('N', 'F4'), ('B', 'G3'), ('N', 'F3'), ('B', 'C5'), ('N', 'H3'), ('B', 'F2'), ('N', 'C4'), ('B', 'C3'), ('N', 'E2'), ('B', 'E1'), ('N', 'B3'), ('B', 'H4'), ('N', 'H5'), ('B', 'A3')])
+  assert leerArchivoEntrada('archivosTests/testUno.txt') == ({'N': 'Kevin', 'B': 'Juan'}, [('N', 'D3'), ('B', 'E3'), ('N', 'F4'), ('B', 'G3')])
 
 def test_desestructurarJugada():
   jugadaUno = ('N', 'D3')

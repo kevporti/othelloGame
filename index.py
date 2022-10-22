@@ -54,6 +54,14 @@ def desestructurarJugada(jugada: tuple[str, str]) -> tuple[str, int, int]:
 
   return colorDelJugador, indiceDeLaFila, indiceDeLaColumna
 
+# Validar que la jugada este dentro del tablero
+# validarJugadaDentroTablero: Tuple[String, String] -> None
+def validarJugadaDentroTablero(jugada: tuple[str, str]):
+  (_, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
+  
+  if indiceDeLaFila >= 8 or indiceDeLaFila < 0 or indiceDeLaColumna >= 8 or indiceDeLaColumna < 0:
+    raise Exception(f'La posicion {jugada[1]} se sale del tablero.')
+
 # Verifica si la posicion de la jugada ya esta ocupada. En ese caso, arroja una excepcion.
 # controlarJugadaRepetida: List[List[String]] -> Tuple[String, String] -> None
 def controlarJugadaRepetida(tablero: list[list[str]], jugada: tuple[str, str]) -> None:
@@ -127,8 +135,8 @@ def aplicarJugada(tablero: list[list[str]], jugada: tuple[str, str], fichasEncer
     tablero[i][j] = colorDelJugador
 
 # Verificar que si o si era necesario saltar el turno.
-# salteoDeJugada: List[List[String]] -> String -> None
-def salteoDeJugada(tablero: list[list[str]], colorDelJugador) -> None:
+# controlarSalteoDeJugada: List[List[String]] -> String -> None
+def controlarSalteoDeJugada(tablero: list[list[str]], colorDelJugador) -> None:
   # Recorriendo una imitacion del tablero para obtener los indices del mismo
   for nroFila in range(0, 8):
     for nroColumna in range(0, 8):
@@ -167,12 +175,13 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> No
     # Verificar si se salteo el turno
     if posicion != '':
       # Controlar reglas si no se salteo
+      validarJugadaDentroTablero(jugada)
       controlarJugadaRepetida(tablero, jugada)
       fichasEncerradas = controlarJugadasValidas(tablero, jugada)
       aplicarJugada(tablero, jugada, fichasEncerradas)
     else:
       # Controlar que no habia jugada posible si se salteo
-      salteoDeJugada(tablero, color)
+      controlarSalteoDeJugada(tablero, color)
     
     # TODO: remove this debugging stuff
     print(jugada)

@@ -1,12 +1,12 @@
 # Funcion auxiliar para remover la secuencia de escape asignada al "Enter" al inicio o final de una cadena de caracteres.
 # removerSecuenciaDeEscape: String -> String
-def removerSecuenciaDeEscape(str):
+def removerSecuenciaDeEscape(str: str) -> str:
   return str.strip("\n")
 
 # Separar las primeras tres lineas del archivo, destinadas a los nombres de los jugadores junto con su color
 # (primeras dos lineas, separando nombre y color designado por una coma) y el color que va a iniciar a colocar fichas (tercer linea).
-# definirJugadoresYColores: FileObject -> Tuple(Dict{String: String}, String)
-def definirJugadoresYColores(archivo):
+# leerColoresYJugadores: FileObject -> Tuple[Dict[String, String], String]
+def leerColoresYJugadores(archivo) -> tuple[dict[str, str], str]:
   [nombreUno, colorUno] = archivo.readline().split(',')
   [nombreDos, colorDos] = archivo.readline().split(',')
   colorInicial = archivo.readline()
@@ -20,8 +20,8 @@ def definirJugadoresYColores(archivo):
 
 # Lee las lineas del archivo correspondientes a las jugadas y devuelve una lista de tuplas de la forma (color del jugador, jugada)
 # en base al color inicial definido anteriormente.
-# definirJugadas: FileObject, String -> List[Tuple(String, String)]
-def definirJugadas(archivo, colorInicial):
+# definirJugadas: FileObject -> String -> List[Tuple[String, String]]
+def definirJugadas(archivo, colorInicial: str) -> list[tuple[str, str]]:
   jugadas = []
   colorActual = colorInicial
 
@@ -29,16 +29,16 @@ def definirJugadas(archivo, colorInicial):
   for linea in archivo:
     jugadas.append((colorActual, removerSecuenciaDeEscape(linea)))
 
-    colorActual = 'N' if (colorActual == 'B') else 'B'
+    colorActual = 'N' if colorActual == 'B' else 'B'
 
   return jugadas
 
 # Abre el archivo y declara las variables de los jugadores, las jugadas y el color inicial, luego cierra el archivo.
-# desestructurarArchivo: None -> Dict{String: String}, List[Tuple(String, String)]
-def desestructurarArchivo():
+# procesarArchivoEntrada: None -> Tuple[Dict[String, String], List[Tuple[String, String]]]
+def procesarArchivoEntrada() -> tuple[dict[str, str], list[tuple[str, str]]]:
   archivo = open('juegoParadoPorDobleSkipGanadorB.txt', 'r')
 
-  (jugadores, colorInicial) = definirJugadoresYColores(archivo)
+  (jugadores, colorInicial) = leerColoresYJugadores(archivo)
   jugadas = definirJugadas(archivo, colorInicial)
 
   archivo.close()
@@ -46,27 +46,28 @@ def desestructurarArchivo():
   return jugadores, jugadas
 
 # Funcion auxiliar para desestructurar el formato de la jugada en color, indice de la columna e indice de la fila.
-# desestructurarJugada: Tuple(String, String) -> String, Int, Int
-def desestructurarJugada(jugada):
-  colorDelJugador, posicionDeLaJugada = jugada
+# desestructurarJugada: Tuple[String, String] -> Tuple[String, Int, Int]
+def desestructurarJugada(jugada: tuple[str, str]) -> tuple[str, int, int]:
+  (colorDelJugador, posicionDeLaJugada) = jugada
   indiceDeLaColumna = ord(posicionDeLaJugada[0]) - ord('A')
   indiceDeLaFila = int(posicionDeLaJugada[1]) - 1
 
   return colorDelJugador, indiceDeLaFila, indiceDeLaColumna
 
-# Checkear si la posicion de la jugada no esta ocupada
-# controlarJugadaRepetida: List[List[String]], Tuple(String, String) -> None
-def controlarJugadaRepetida(tablero, jugada):
-  _, indiceDeLaFila, indiceDeLaColumna = desestructurarJugada(jugada)
+# Verifica si la posicion de la jugada ya esta ocupada. En ese caso, arroja una excepcion.
+# controlarJugadaRepetida: List[List[String]] -> Tuple[String, String] -> None
+def controlarJugadaRepetida(tablero: list[list[str]], jugada: tuple[str, str]) -> None:
+  (_, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
   if tablero[indiceDeLaFila][indiceDeLaColumna] != " ":
     raise Exception(f'La posicion {jugada[1]} ya esta ocupada')
 
-# Determinar si la posicion de la jugada coincide con tener al menos una ficha del oponente alrededor de la nueva ficha,
-# sino, es una jugada invalida. Si la jugada es invalida, se produce una excepcion.
-# Tambien determinar si hay una ficha aliada que encierre a la enemiga para poder cambiar el color y validar el movimiento.
-# controlarJugadasValidas: List[List[String]], Tuple(String, String) -> None
-def controlarJugadasValidas(tablero, jugada):
-  colorDelJugador, indiceDeLaFila, indiceDeLaColumna = desestructurarJugada(jugada)
+# Determina si la posicion de la jugada coincide con tener al menos una ficha del oponente alrededor de la nueva ficha,
+# si no, es una jugada invalida.
+# Tambien determina si hay una ficha aliada que encierre a la enemiga para poder cambiar el color y validar el movimiento.
+# Si la jugada es invalida, se produce una excepcion.
+# controlarJugadasValidas: List[List[String]] -> Tuple[String, String] -> None
+def controlarJugadasValidas(tablero: list[list[str]], jugada: tuple[str, str]) -> None:
+  (colorDelJugador, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
   colorDelOponente = 'N' if colorDelJugador == 'B' else 'B'
   hayOponenteAlrededor = False
   hayFichasEncerradas = False
@@ -110,44 +111,48 @@ def controlarJugadasValidas(tablero, jugada):
     raise Exception(f'La posicion {jugada[1]} no encierra fichas del oponente.')
 
 # Verificar que si o si era necesario saltar el turno.
-# reglaTres: List[List[String]], Tuple(String, String) -> None
-def reglaTres(tablero, jugada):
+# reglaTres: List[List[String]] -> Tuple[String, String] -> None
+def reglaTres(tablero: list[list[str]], jugada: tuple[str, str]) -> None:
   pass
 
 
 # Dada una jugada valida, aplicar la misma al tablero.
-# aplicarJugada: List[List[String]], Tuple(String, String) -> None
-def aplicarJugada(tablero, jugada):
-  colorDelJugador, indiceDeLaFila, indiceDeLaColumna = desestructurarJugada(jugada)
+# aplicarJugada: List[List[String]] -> Tuple[String, String] -> None
+def aplicarJugada(tablero: list[list[str]], jugada: tuple[str, str]) -> None:
+  (colorDelJugador, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
 
   tablero[indiceDeLaFila][indiceDeLaColumna] = colorDelJugador
 
 # Verifica cada jugada (llamando a las respectivas funciones de cada regla) y, si es valida, aplica el resultado de la misma al tablero.
-# simularJuego: List[List[String]], Tuple(String, String) -> None
-def simularJuego(tablero, jugadas):
+# simularJuego: List[List[String]] -> List[Tuple[String, String]] -> None
+def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> None:
   for jugada in jugadas:
-    colorDelJugador, indiceDeLaFila, indiceDeLaColumna = desestructurarJugada(jugada)
+    (colorDelJugador, _, _) = desestructurarJugada(jugada)
 
-    # Si el "color del jugador" no es un string vacio, hacer los respectivos controles de la jugada, sino verificar que la jugada (skippeada)
-    # era la unica opcion.
+    # Verificar si se salteo el turno
     if colorDelJugador != ' ':
+      # Controlar reglas si no se salteo
       controlarJugadaRepetida(tablero, jugada)
       controlarJugadaRepetida(tablero, jugada)
       controlarJugadasValidas(tablero, jugada)
       aplicarJugada(tablero, jugada)
     else:
+      # Controlar que no habia jugada posible si se salteo
       reglaTres(tablero, jugada)
     
+    # TODO: remove this debugging stuff
     print(jugada)
     imprimirTablero(tablero)
     print()
 
-# Recibe el tablero y devuelve el nombre del jugador, basado en la cantidad de fichas de cada color
-def determinarGanador(tablero):
+# Recibe el tablero y devuelve el color del jugador ganador, basado en la cantidad de fichas de cada color
+# determinarGanador: List[List[String]] -> String
+def determinarGanador(tablero: list[list[str]]) -> str:
   pass
 
 # Muestra el tablero con el formato adecuado
-def imprimirTablero(tablero):
+# imprimirTablero: List[List[String]] -> None
+def imprimirTablero(tablero: list[list[str]]) -> None:
   print('  A B C D E F G H')
   for i in range(8):
     nroFila = i + 1
@@ -157,7 +162,7 @@ def imprimirTablero(tablero):
 
 # Construye el tablero con las cuatro piezas iniciales en el centro.
 # construitTableroInicial: None -> List[List[String]]
-def construirTableroInicial():
+def construirTableroInicial() -> list[list[str]]:
   tablero = []
   for i in range(8):
     fila = []
@@ -172,12 +177,12 @@ def construirTableroInicial():
 
   return tablero
 
-# Punto de entrada del programa. Invoca al tablero, los jugadores y las jugadas e intenta simular un juego, si hay errores,
-# se le informa al usuario y se muestra el tablero anterior a esa jugada, sino se muestra el tablero final con el ganador.
+# Punto de entrada del programa. Llama a las funciones para crea el tablero, leer la entrada del usuario y simular el juego. Si hay errores,
+# se le informa al usuario y se muestra el tablero anterior a esa jugada, si no, se muestra el tablero final con el ganador.
 # main: None -> None
-def main():
+def main() -> None:
   tablero = construirTableroInicial()
-  jugadores, jugadas = desestructurarArchivo()
+  _, jugadas = procesarArchivoEntrada()
 
   try:
     simularJuego(tablero, jugadas)
@@ -189,6 +194,6 @@ def main():
     determinarGanador(tablero)
     # mostrar ganador
 
-# 
+# No ejecutar codigo al importar funciones desde este archivo
 if __name__ == '__main__':
   main()

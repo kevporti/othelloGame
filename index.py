@@ -127,10 +127,8 @@ def aplicarJugada(tablero: list[list[str]], jugada: tuple[str, str]) -> None:
 # simularJuego: List[List[String]] -> List[Tuple[String, String]] -> None
 def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> None:
   for jugada in jugadas:
-    (colorDelJugador, _, _) = desestructurarJugada(jugada)
-
     # Verificar si se salteo el turno
-    if colorDelJugador != ' ':
+    if jugada[1] != '':
       # Controlar reglas si no se salteo
       controlarJugadaRepetida(tablero, jugada)
       controlarJugadaRepetida(tablero, jugada)
@@ -167,7 +165,7 @@ def construirTableroInicial() -> list[list[str]]:
   for i in range(8):
     fila = []
     for j in range(8):
-      if (i == 3 and j == 3) or (i == 4 and j == 4):
+      if (i == j == 3) or (i == j == 4):
         fila.append("B")
       elif (i == 3 and j == 4) or (i == 4 and j == 3):
         fila.append("N")

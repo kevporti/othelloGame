@@ -20,8 +20,8 @@ def leerColoresYJugadores(archivo) -> tuple[dict[str, str], str]:
 
 # Lee las lineas del archivo correspondientes a las jugadas y devuelve una lista de tuplas de la forma (color del jugador, jugada)
 # en base al color inicial definido anteriormente.
-# definirJugadas: FileObject -> String -> List[Tuple[String, String]]
-def definirJugadas(archivo, colorInicial: str) -> list[tuple[str, str]]:
+# leerJugadas: FileObject -> String -> List[Tuple[String, String]]
+def leerJugadas(archivo, colorInicial: str) -> list[tuple[str, str]]:
   jugadas = []
   colorActual = colorInicial
 
@@ -34,12 +34,12 @@ def definirJugadas(archivo, colorInicial: str) -> list[tuple[str, str]]:
   return jugadas
 
 # Abre el archivo y declara las variables de los jugadores, las jugadas y el color inicial, luego cierra el archivo.
-# procesarArchivoEntrada: None -> Tuple[Dict[String, String], List[Tuple[String, String]]]
-def procesarArchivoEntrada() -> tuple[dict[str, str], list[tuple[str, str]]]:
+# leerArchivoEntrada: None -> Tuple[Dict[String, String], List[Tuple[String, String]]]
+def leerArchivoEntrada() -> tuple[dict[str, str], list[tuple[str, str]]]:
   archivo = open('juegoParadoPorDobleSkipGanadorB.txt', 'r')
 
   (jugadores, colorInicial) = leerColoresYJugadores(archivo)
-  jugadas = definirJugadas(archivo, colorInicial)
+  jugadas = leerJugadas(archivo, colorInicial)
 
   archivo.close()
 
@@ -182,7 +182,7 @@ def construirTableroInicial() -> list[list[str]]:
 # main: None -> None
 def main() -> None:
   tablero = construirTableroInicial()
-  _, jugadas = procesarArchivoEntrada()
+  _, jugadas = leerArchivoEntrada()
 
   try:
     simularJuego(tablero, jugadas)

@@ -5,21 +5,23 @@ def test_removerSecuenciaDeEscape():
   assert removerSecuenciaDeEscape('\nhola') == 'hola'
   assert removerSecuenciaDeEscape('hola\n') == 'hola'
 
-def test_definirJugadoresYColores():
+def test_leerColoresYJugadores():
   archivo = open('juegoParadoPorDobleSkipGanadorB.txt', 'r')
 
   assert leerColoresYJugadores(archivo) == ({'N': 'Kevin', 'B': 'Juan'}, 'N')
+
   archivo.close()
 
-def test_definirJugadas():
+def test_leerJugadas():
   archivo = open('juegoParadoPorDobleSkipGanadorB.txt', 'r')
   (_, colorInicial) = leerColoresYJugadores(archivo)
 
-  assert definirJugadas(archivo, colorInicial) == [('N', 'D3'), ('B', 'E3'), ('N', 'F4'), ('B', 'G3'), ('N', 'F3'), ('B', 'C5'), ('N', 'H3'), ('B', 'F2'), ('N', 'C4'), ('B', 'C3'), ('N', 'E2'), ('B', 'E1'), ('N', 'B3'), ('B', 'H4'), ('N', 'H5'), ('B', 'A3')]
+  assert leerJugadas(archivo, colorInicial) == [('N', 'D3'), ('B', 'E3'), ('N', 'F4'), ('B', 'G3'), ('N', 'F3'), ('B', 'C5'), ('N', 'H3'), ('B', 'F2'), ('N', 'C4'), ('B', 'C3'), ('N', 'E2'), ('B', 'E1'), ('N', 'B3'), ('B', 'H4'), ('N', 'H5'), ('B', 'A3')]
+
   archivo.close()
 
-def test_desestructurarArchivo():
-  assert procesarArchivoEntrada() == ({'N': 'Kevin', 'B': 'Juan'}, [('N', 'D3'), ('B', 'E3'), ('N', 'F4'), ('B', 'G3'), ('N', 'F3'), ('B', 'C5'), ('N', 'H3'), ('B', 'F2'), ('N', 'C4'), ('B', 'C3'), ('N', 'E2'), ('B', 'E1'), ('N', 'B3'), ('B', 'H4'), ('N', 'H5'), ('B', 'A3')])
+def test_leerArchivoEntrada():
+  assert leerArchivoEntrada() == ({'N': 'Kevin', 'B': 'Juan'}, [('N', 'D3'), ('B', 'E3'), ('N', 'F4'), ('B', 'G3'), ('N', 'F3'), ('B', 'C5'), ('N', 'H3'), ('B', 'F2'), ('N', 'C4'), ('B', 'C3'), ('N', 'E2'), ('B', 'E1'), ('N', 'B3'), ('B', 'H4'), ('N', 'H5'), ('B', 'A3')])
 
 def test_desestructurarJugada():
   jugadaUno = ('N', 'D3')
@@ -72,4 +74,3 @@ def test_imprimirTablero():
   tablero = construirTableroInicial()
 
   assert imprimirTablero(tablero) == None
-  

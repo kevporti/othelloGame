@@ -1,6 +1,6 @@
 Tomas,N
 Lucas,B
-B
+N
 C4
 C3
 C2

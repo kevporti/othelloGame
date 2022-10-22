@@ -1,5 +1,8 @@
 # Funcion auxiliar para remover la secuencia de escape asignada al "Enter" al inicio o final de una cadena de caracteres.
 # removerSecuenciaDeEscape: String -> String
+from ast import If
+
+
 def removerSecuenciaDeEscape(str: str) -> str:
   return str.strip("\n")
 
@@ -190,8 +193,25 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> No
 
 # Recibe el tablero y devuelve el color del jugador ganador, basado en la cantidad de fichas de cada color
 # determinarGanador: List[List[String]] -> String
-def determinarGanador(tablero: list[list[str]]) -> str:
-  pass
+def determinarGanador(tablero: list[list[str]], jugadores) -> str:
+  fichasBlancas = 0
+  fichasNegras = 0
+
+  for linea in tablero:
+    for casilla in linea:
+      if casilla == 'B':
+        fichasBlancas += 1
+      elif casilla == 'N':
+        fichasNegras += 1
+  
+  if fichasBlancas < fichasNegras:
+    nombreDelGanador = jugadores['N']
+    print(f'El ganador es: {nombreDelGanador}')
+  elif fichasBlancas > fichasNegras:
+    nombreDelGanador = jugadores['B']
+    print(f'El ganador es: {nombreDelGanador}')
+  else:
+    print('Ha habido un empate.')
 
 # Muestra el tablero con el formato adecuado
 # imprimirTablero: List[List[String]] -> None
@@ -226,7 +246,7 @@ def construirTableroInicial() -> list[list[str]]:
 def main() -> None:
   nombreArchivo = input('Ingrese el nombre del archivo de entrada: ')
   try:
-    _, jugadas = leerArchivoEntrada(nombreArchivo)
+    jugadores, jugadas = leerArchivoEntrada(nombreArchivo)
   except FileNotFoundError:
     print('No se encontro el archivo.')
   else:
@@ -239,7 +259,7 @@ def main() -> None:
       print(str(e))
     else:
       imprimirTablero(tablero)
-      determinarGanador(tablero)
+      determinarGanador(tablero, jugadores)
       # mostrar ganador
 
 # No ejecutar codigo al importar funciones desde este archivo

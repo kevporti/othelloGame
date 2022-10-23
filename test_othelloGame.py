@@ -84,8 +84,3 @@ def test_controlarJugadasValidas():
   # Ficha enemiga alrededor y encierra. Devuelve coordenadas de la ficha encerrada.
   jugada = ('B', 'C5')
   assert controlarJugadaValidas(tablero, jugada) == [(4, 3)]
-
-def test_imprimirTablero():
-  tablero = construirTableroInicial()
-
-  assert imprimirTablero(tablero) == None

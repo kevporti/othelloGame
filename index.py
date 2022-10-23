@@ -193,7 +193,7 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> No
 
 # Recibe el tablero y devuelve el color del jugador ganador, basado en la cantidad de fichas de cada color
 # determinarGanador: List[List[String]] -> String
-def determinarGanador(tablero: list[list[str]], jugadores) -> str:
+def determinarGanador(tablero: list[list[str]]) -> str:
   fichasBlancas = 0
   fichasNegras = 0
 
@@ -205,13 +205,11 @@ def determinarGanador(tablero: list[list[str]], jugadores) -> str:
         fichasNegras += 1
   
   if fichasBlancas < fichasNegras:
-    nombreDelGanador = jugadores['N']
-    print(f'El ganador es: {nombreDelGanador}')
+    return 'N'
   elif fichasBlancas > fichasNegras:
-    nombreDelGanador = jugadores['B']
-    print(f'El ganador es: {nombreDelGanador}')
+    return 'B'
   else:
-    print('Ha habido un empate.')
+    return 'empate'
 
 # Muestra el tablero con el formato adecuado
 # imprimirTablero: List[List[String]] -> None
@@ -259,8 +257,11 @@ def main() -> None:
       print(str(e))
     else:
       imprimirTablero(tablero)
-      determinarGanador(tablero, jugadores)
-      # mostrar ganador
+      ganador = determinarGanador(tablero)
+      if ganador != 'empate':
+        print(f'El ganador es: {jugadores[ganador]}.')
+      else:
+        print('Ha habido un empate.')
 
 # No ejecutar codigo al importar funciones desde este archivo
 if __name__ == '__main__':

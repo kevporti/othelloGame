@@ -211,16 +211,6 @@ def determinarGanador(tablero: list[list[str]]) -> str:
   else:
     return 'empate'
 
-# Muestra el tablero con el formato adecuado
-# imprimirTablero: List[List[String]] -> None
-def imprimirTablero(tablero: list[list[str]]) -> None:
-  print('  A B C D E F G H')
-  for i in range(8):
-    nroFila = i + 1
-    contenidoFila = ' '.join(tablero[i])
-    print(f'{nroFila} {contenidoFila} {nroFila}')
-  print('  A B C D E F G H')
-
 # Construye el tablero con las cuatro piezas iniciales en el centro.
 # construitTableroInicial: None -> List[List[String]]
 def construirTableroInicial() -> list[list[str]]:
@@ -237,6 +227,16 @@ def construirTableroInicial() -> list[list[str]]:
     tablero.append(fila)
 
   return tablero
+
+# Muestra el tablero con el formato adecuado
+# imprimirTablero: List[List[String]] -> None
+def imprimirTablero(tablero: list[list[str]]) -> None:
+  print('  A B C D E F G H')
+  for i in range(8):
+    nroFila = i + 1
+    contenidoFila = ' '.join(tablero[i])
+    print(f'{nroFila} {contenidoFila} {nroFila}')
+  print('  A B C D E F G H')
 
 # Punto de entrada del programa. Llama a las funciones para crea el tablero, leer la entrada del usuario y simular el juego. Si hay errores,
 # se le informa al usuario y se muestra el tablero anterior a esa jugada, si no, se muestra el tablero final con el ganador.

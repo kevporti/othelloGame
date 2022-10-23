@@ -1,3 +1,14 @@
+# ----------- DISEÑO DE DATOS -----------
+# El TABLERO esta representado por una lista de listas de strings, donde la primer lista guarda las filas y la segunda guarda las casillas.
+# Dentro de cada casilla luego se guardara la inicial del color de la ficha que esta colocada ahi, sino estara un string vacio representando
+# que no se ha hecho una jugada en esa posicion.
+# Los COLORES se representan como strings, utilizando las iniciales de los mismos ('B' para blanco y 'N' para negro).
+# El conjunto de las JUGADAS se representan mediante una lista de tuplas, donde cada tupla es una jugada que contiene el color de los 
+# jugadores dependiendo del turno de cada uno, y su jugada correspondiente.
+# Los JUGADORES se representan utilizando un diccionario, en el cual las claves son los colores que les corresponde y los
+# valores asociados son los nombres de los jugadores.
+# ---------------------------------------
+
 # Funcion auxiliar para remover la secuencia de escape asignada al "Enter" al inicio o final de una cadena de caracteres.
 # removerSecuenciaDeEscape: String -> String
 def removerSecuenciaDeEscape(str: str) -> str:

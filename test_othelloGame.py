@@ -32,6 +32,21 @@ def test_desestructurarJugada():
   assert desestructurarJugada(jugadaDos) == ('B', 6, 7)
   assert desestructurarJugada(jugadaTres) == ('B', 0, 0)
 
+def test_validarJugadaDentroTablero():
+  jugadaUno = ('N', 'D3')
+  jugadaDos = ('B', 'H9')
+  jugadaTres = ('B', 'Z1')
+
+  assert validarJugadaDentroTablero(jugadaUno) == None
+
+  with pytest.raises(Exception) as err:
+    validarJugadaDentroTablero(jugadaDos)
+  assert str(err.value) == f'La posicion {jugadaDos[1]} se sale del tablero.'
+
+  with pytest.raises(Exception) as err:
+    validarJugadaDentroTablero(jugadaTres)
+  assert str(err.value) == f'La posicion {jugadaTres[1]} se sale del tablero.'
+
 def test_controlarJugadaRepetida():
   tablero = construirTableroInicial()
   jugada = ('B', 'A1')

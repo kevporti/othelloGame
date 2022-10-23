@@ -1,0 +1,11 @@
+Pedro,B
+Julia,N
+N
+D3
+E3
+F3
+E2
+D1
+G3
+H3
+C3

@@ -1,8 +1,5 @@
 # Funcion auxiliar para remover la secuencia de escape asignada al "Enter" al inicio o final de una cadena de caracteres.
 # removerSecuenciaDeEscape: String -> String
-from ast import If
-
-
 def removerSecuenciaDeEscape(str: str) -> str:
   return str.strip("\n")
 

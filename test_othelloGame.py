@@ -6,17 +6,17 @@ def test_removerSecuenciaDeEscape():
   assert removerSecuenciaDeEscape('hola\n') == 'hola'
 
 def test_leerColoresYJugadores():
-  archivo = open('juegoParadoPorDobleSkipGanadorB.txt', 'r')
+  archivo = open('archivosTests/testUno.txt', 'r')
 
   assert leerColoresYJugadores(archivo) == ({'N': 'Kevin', 'B': 'Juan'}, 'N')
 
   archivo.close()
 
 def test_leerJugadas():
-  archivo = open('juegoParadoPorDobleSkipGanadorB.txt', 'r')
+  archivo = open('archivosTests/testUno.txt', 'r')
   (_, colorInicial) = leerColoresYJugadores(archivo)
 
-  assert leerJugadas(archivo, colorInicial) == [('N', 'D3'), ('B', 'E3'), ('N', 'F4'), ('B', 'G3'), ('N', 'F3'), ('B', 'C5'), ('N', 'H3'), ('B', 'F2'), ('N', 'C4'), ('B', 'C3'), ('N', 'E2'), ('B', 'E1'), ('N', 'B3'), ('B', 'H4'), ('N', 'H5'), ('B', 'A3')]
+  assert leerJugadas(archivo, colorInicial) == [('N', 'D3'), ('B', 'E3'), ('N', 'F4'), ('B', 'G3')]
 
   archivo.close()
 
@@ -51,24 +51,24 @@ def test_controlarJugadasValidas():
   # Ninguna ficha alrededor
   jugada = ('B', 'A1')
   with pytest.raises(Exception) as err:
-    controlarJugadasValidas(tablero, jugada)
+    controlarJugadaValidas(tablero, jugada)
   assert str(err.value) == f'La posicion {jugada[1]} no tiene ningua ficha del oponente alrededor.'
 
   # Ficha aliada alrededor pero no enemiga
   jugada = ('B', 'C3')
   with pytest.raises(Exception) as err:
-    controlarJugadasValidas(tablero, jugada)
+    controlarJugadaValidas(tablero, jugada)
   assert str(err.value) == f'La posicion {jugada[1]} no tiene ningua ficha del oponente alrededor.'
 
   # Ficha enemiga alrededor pero no encierra
   jugada = ('B', 'C6')
   with pytest.raises(Exception) as err:
-    controlarJugadasValidas(tablero, jugada)
+    controlarJugadaValidas(tablero, jugada)
   assert str(err.value) == f'La posicion {jugada[1]} no encierra fichas del oponente.'
 
-  # Ficha enemiga alrededor y encierra
-  jugada = ('B', 'C4')
-  assert controlarJugadasValidas(tablero, jugada) == None
+  # Ficha enemiga alrededor y encierra. Devuelve coordenadas de la ficha encerrada.
+  jugada = ('B', 'C5')
+  assert controlarJugadaValidas(tablero, jugada) == [(4, 3)]
 
 def test_imprimirTablero():
   tablero = construirTableroInicial()

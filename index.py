@@ -76,8 +76,8 @@ def controlarJugadaRepetida(tablero: list[list[str]], jugada: tuple[str, str]) -
 # si no, es una jugada invalida.
 # Tambien determina si hay una ficha aliada que encierre a la enemiga para poder cambiar el color y validar el movimiento.
 # Si la jugada es invalida, se produce una excepcion.
-# controlarJugadasValidas: List[List[String]] -> Tuple[String, String] -> Tuple[Int, Int]
-def controlarJugadasValidas(tablero: list[list[str]], jugada: tuple[str, str]) -> list[tuple[int, int]]:
+# controlarJugadaValidas: List[List[String]] -> Tuple[String, String] -> Tuple[Int, Int]
+def controlarJugadaValidas(tablero: list[list[str]], jugada: tuple[str, str]) -> list[tuple[int, int]]:
   (colorDelJugador, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
   colorDelOponente = 'N' if colorDelJugador == 'B' else 'B'
   hayOponenteAlrededor = False
@@ -162,7 +162,7 @@ def controlarSalteoDeJugada(tablero: list[list[str]], colorDelJugador) -> None:
 
               try:
                 # Intentar jugada
-                controlarJugadasValidas(tablero, jugada)
+                controlarJugadaValidas(tablero, jugada)
               except:
                 # Si tira excepcion, la jugada no era posible y el salto de turno es valido.
                 pass
@@ -180,7 +180,7 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> No
       # Controlar reglas si no se salteo
       validarJugadaDentroTablero(jugada)
       controlarJugadaRepetida(tablero, jugada)
-      fichasEncerradas = controlarJugadasValidas(tablero, jugada)
+      fichasEncerradas = controlarJugadaValidas(tablero, jugada)
       aplicarJugada(tablero, jugada, fichasEncerradas)
     else:
       # Controlar que no habia jugada posible si se salteo

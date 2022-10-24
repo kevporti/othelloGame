@@ -1,4 +1,3 @@
-import pytest
 from index import *
 
 def test_removerSecuenciaDeEscape():
@@ -196,16 +195,19 @@ def test_simularJuego():
   archivoTestDos = 'archivosTests/testDos.txt'
   archivoTestTres = 'archivosTests/testTres.txt'
   archivoTestCuatro = 'archivosTests/testCuatro.txt'
+  archivoTestCinco = 'archivosTests/testCinco.txt'
   (_, jugadasTestUno) = leerArchivoEntrada(archivoTestUno)
   (_, jugadasTestDos) = leerArchivoEntrada(archivoTestDos)
   (_, jugadasTestTres) = leerArchivoEntrada(archivoTestTres)
   (_, jugadasTestCuatro) = leerArchivoEntrada(archivoTestCuatro)
+  (_, jugadasTestCinco) = leerArchivoEntrada(archivoTestCinco)
 
   tablero = construirTableroInicial()
   assert simularJuego(tablero, jugadasTestUno) == {
-    'partidaValida': False, 
-    'partidaIncompleta': True, 
-    'color': 'N', 
+    'partidaValida': False,
+    'partidaIncompleta': True,
+    'dobleSalteo': False,
+    'color': 'N',
     'error': 'Se podria haber colocado una ficha en la posicion E2.'
   }
 
@@ -214,14 +216,25 @@ def test_simularJuego():
     'partidaValida': True
   }
 
-  assert simularJuego(construirTableroInicial(), jugadasTestTres) == {
-    'partidaValida': False, 
-    'partidaIncompleta': True, 
-    'color': 'N', 
+  tablero = construirTableroInicial()
+  assert simularJuego(tablero, jugadasTestTres) == {
+    'partidaValida': False,
+    'partidaIncompleta': True,
+    'dobleSalteo': False,
+    'color': 'N',
     'error': 'Se podria haber colocado una ficha en la posicion B3.'
   }
 
   tablero = construirTableroInicial()
   assert simularJuego(tablero, jugadasTestCuatro) == {
     'partidaValida': True
+  }
+
+  tablero = construirTableroInicial()
+  assert simularJuego(tablero, jugadasTestCinco) == {
+    'partidaValida': False,
+    'partidaIncompleta': True,
+    'dobleSalteo': True,
+    'color': 'B',
+    'error': 'Se podria haber colocado una ficha en la posicion B7.'
   }

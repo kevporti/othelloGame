@@ -258,22 +258,36 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> di
     
   # Una vez terminados los movimientos ingresados por el usuario, si no se produjo ningun error, comprobar si la partida quedo sin terminar o no.
   resultado['partidaIncompleta'] = False
+  resultado['dobleSalteo'] = None
   if resultado['jugadaValida']:
     colorTurnoSiguiente = 'N' if color == 'B' else 'B'
-    # Simular un salteo de jugada para saber si una jugada era posible
+    # Simular un salteo de jugada para saber si una jugada era posible.
     resultado = controlarSalteoDeJugada(tablero, colorTurnoSiguiente)
     
     if not resultado['jugadaValida']:
-      # Si esa simulacion da como resultado que es una jugada invalida, entonces es porque habia alguna jugada posible y, por lo tanto, la partida esta incompleta
+      # Si esa simulacion da como resultado que es una jugada invalida, entonces es porque habia alguna jugada posible y, por lo tanto, la partida esta incompleta.
       resultado['partidaIncompleta'] = True
+      resultado['dobleSalteo'] = False
     else:
-      # Si saltear es una jugada valida, entonces la partida no esta incompleta.
-      resultado['partidaIncompleta'] = False
+      # Si saltear es una jugada valida, entonces hay que verificar un segundo salto de turno para ver que no se puede continuar jugando.
+      colorTurnoSiguiente = 'N' if colorTurnoSiguiente == 'B' else 'B'
+      # Simular un salteo de jugada para saber si una jugada era posible.
+      resultado = controlarSalteoDeJugada(tablero, colorTurnoSiguiente)
+      
+      if not resultado['jugadaValida']:
+        # Si esa simulacion da como resultado que es una jugada invalida, entonces es porque habia alguna jugada posible y, por lo tanto, la partida esta incompleta.
+        resultado['partidaIncompleta'] = True
+        resultado['dobleSalteo'] = True
+      else:
+        # Si saltear es una jugada valida, entonces la partida no esta incompleta.
+        resultado['partidaIncompleta'] = False
+        resultado['dobleSalteo'] = None
 
   if not resultado['jugadaValida']:
     return {
       'partidaValida': False,
       'partidaIncompleta': resultado['partidaIncompleta'],
+      'dobleSalteo': resultado['dobleSalteo'],
       'color': resultado['color'],
       'error': resultado['error']
     }
@@ -360,7 +374,12 @@ def main() -> None:
       error = resultado['error']
 
       if resultado['partidaIncompleta']:
-        print(f'Partida incompleta. Era el turno de {turnoDeJugador} y aun habia uno o mas movimientos posibles: {error}')
+        if resultado['dobleSalteo']:
+          turnoSalteado = jugadores['N' if resultado['color'] == 'B' else 'B']
+          print(f'Partida incompleta. Era el turno de {turnoSalteado} y se podia saltear ese turno y luego {turnoDeJugador} tendria al menos un movimiento posible: {error}')
+        else:
+          print(f'Partida incompleta. Era el turno de {turnoDeJugador} y aun habia uno o mas movimientos posibles: {error}')
+
       else:
         print(f'Jugada invalida ejecutada por {turnoDeJugador}: {error}')
 

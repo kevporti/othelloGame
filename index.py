@@ -1,6 +1,6 @@
 # ----------- DISEÑO DE DATOS -----------
-# El TABLERO esta representado por una lista de listas de strings, donde la primer lista guarda las filas y la segunda guarda las casillas.
-# Dentro de cada casilla luego se guardara la inicial del color de la ficha que esta colocada ahi, sino estara un string vacio representando
+# El TABLERO esta representado por una lista de filas, siendo cada fila una lista de casillas, y cada casilla representada con un string.
+# Dentro de cada casilla luego se guardara la inicial del color de la ficha que esta colocada ahi, sino estara un string con un espacio (" ") representando
 # que no se ha hecho una jugada en esa posicion.
 # Los COLORES se representan como strings, utilizando las iniciales de los mismos ('B' para blanco y 'N' para negro).
 # El conjunto de las JUGADAS se representan mediante una lista de tuplas, donde cada tupla es una jugada que contiene el color de los 
@@ -44,7 +44,8 @@ def leerJugadas(archivo, colorInicial: str) -> list[tuple[str, str]]:
 
   return jugadas
 
-# Abre el archivo y declara las variables de los jugadores, las jugadas y el color inicial, luego cierra el archivo.
+# Dado el nombre del archivo, llama a las funciones necesarias para leer el mismo. Devuelve una tupla que contiene un diccionario que indica
+# el color asignado a cada jugador, y una lista de jugadas (cada jugada representada por una tupla)
 # leerArchivoEntrada: String -> Tuple[Dict[String, String], List[Tuple[String, String]]]
 def leerArchivoEntrada(nombreArchivo: str) -> tuple[dict[str, str], list[tuple[str, str]]]:
   archivo = open(nombreArchivo, 'r')
@@ -54,16 +55,16 @@ def leerArchivoEntrada(nombreArchivo: str) -> tuple[dict[str, str], list[tuple[s
 
   archivo.close()
 
-  return jugadores, jugadas
+  return (jugadores, jugadas)
 
 # Funcion auxiliar para desestructurar el formato de la jugada en color, indice de la columna e indice de la fila.
 # desestructurarJugada: Tuple[String, String] -> Tuple[String, Int, Int]
 def desestructurarJugada(jugada: tuple[str, str]) -> tuple[str, int, int]:
   (colorDelJugador, posicionDeLaJugada) = jugada
-  indiceDeLaColumna = ord(posicionDeLaJugada[0]) - ord('A')
+  indiceDeLaColumna = ord(posicionDeLaJugada[0]) - ord('A') # convertir la letra de la columna en el indice adecuado
   indiceDeLaFila = int(posicionDeLaJugada[1]) - 1
 
-  return colorDelJugador, indiceDeLaFila, indiceDeLaColumna
+  return (colorDelJugador, indiceDeLaFila, indiceDeLaColumna)
 
 # Validar que la jugada este dentro del tablero
 # validarJugadaDentroTablero: Tuple[String, String] -> Dict[String, Boolean | String]
@@ -74,29 +75,29 @@ def validarJugadaDentroTablero(jugada: tuple[str, str]) -> dict[str, bool | str]
     return {
       'jugadaValida': False,
       'color': color, 
-      'error': f'La posicion {jugada[1]} se sale del tablero.'}
-  else:
-    return {
-      'jugadaValida': True,
+      'error': f'La posicion {jugada[1]} se sale del tablero.'
     }
+  
+  return {
+    'jugadaValida': True,
+  }
 
-# Verifica si la posicion de la jugada ya esta ocupada. En ese caso, arroja una excepcion.
+# Verifica si la posicion de la jugada ya esta ocupada.
 # controlarJugadaRepetida: List[List[String]] -> Tuple[String, String] -> Dict[String, Boolean | String]
 def controlarJugadaRepetida(tablero: list[list[str]], jugada: tuple[str, str]) -> dict[str, bool | str]:
   (color, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
+
   if tablero[indiceDeLaFila][indiceDeLaColumna] != " ":
     return {'jugadaValida': False, 'color': color, 'error': f'La posicion {jugada[1]} ya esta ocupada.'}
-  else:
-    return {
-      'jugadaValida': True,
-    }
 
-# Determina si la posicion de la jugada coincide con tener al menos una ficha del oponente alrededor de la nueva ficha,
-# si no, es una jugada invalida.
-# Tambien determina si hay una ficha aliada que encierre a la enemiga para poder cambiar el color y validar el movimiento.
-# Si la jugada es invalida, se produce una excepcion.
-# controlarJugadaValidas: List[List[String]] -> Tuple[String, String] -> Dict[String, Boolean | String | List[Tuple[Int, Int]]]
-def controlarJugadaValidas(tablero: list[list[str]], jugada: tuple[str, str]) -> dict[str, bool | str | list[tuple[int, int]]]:
+  return {
+    'jugadaValida': True,
+  }
+
+# Determina si la casilla elegida en la jugada coincide con tener al menos una ficha del oponente alrededor de la nueva ficha
+# y si, a su vez, hay una ficha aliada en direccion vertical, horizontal o diagonal que, junto con la ficha a colocar, encierre fichas enemigas.
+# controlarJugadaValida: List[List[String]] -> Tuple[String, String] -> Dict[String, Boolean | String | List[Tuple[Int, Int]]]
+def controlarJugadaValida(tablero: list[list[str]], jugada: tuple[str, str]) -> dict[str, bool | str | list[tuple[int, int]]]:
   (colorDelJugador, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
   colorDelOponente = 'N' if colorDelJugador == 'B' else 'B'
   hayOponenteAlrededor = False
@@ -135,7 +136,6 @@ def controlarJugadaValidas(tablero: list[list[str]], jugada: tuple[str, str]) ->
             hayFichasEncerradas = True
             fichasEncerradas += fichasEnemigas
 
-  # Tirar excepciones si la jugada es invalida
   if not hayOponenteAlrededor:
     return {
       'jugadaValida': False,
@@ -155,59 +155,59 @@ def controlarJugadaValidas(tablero: list[list[str]], jugada: tuple[str, str]) ->
     'fichasEncerradas': fichasEncerradas
   }
 
-# Dada una jugada valida, aplicar la misma al tablero.
+# Dada una jugada valida, y las fichas que fueron encerradas durante la misma, la aplica sobre el tablero.
 # aplicarJugada: List[List[String]] -> Tuple[String, String] -> None
 def aplicarJugada(tablero: list[list[str]], jugada: tuple[str, str], fichasEncerradas: list[tuple[int, int]]) -> None:
   (colorDelJugador, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
 
-  # Ficha colocada
+  # Ficha que el jugador acaba de colocar
   tablero[indiceDeLaFila][indiceDeLaColumna] = colorDelJugador
 
-  # Cambiar fichas encerradas
+  # Cambiar el color de las fichas enemigas encerradas
   for (i, j) in fichasEncerradas:
     tablero[i][j] = colorDelJugador
 
-# Verificar que si o si era necesario saltar el turno.
+# Verificar que el jugador que salteo el turno no tenia otra opcion, es decir, no podia realizar ninguna jugada valida.
 # controlarSalteoDeJugada: List[List[String]] -> String -> Dict[String, Boolean | String]
 def controlarSalteoDeJugada(tablero: list[list[str]], colorDelJugador: str) -> dict[str, bool | str]:
   seEncontroJugadaPosible = False
 
-  # Recorriendo una imitacion del tablero para obtener los indices del mismo
+  # Recorrer posiciones del tablero
   nroFila = 0
   while nroFila < 8 and not seEncontroJugadaPosible:
     nroColumna = 0
     while nroColumna < 8 and not seEncontroJugadaPosible:
-      # Restringiendo las verificaciones a las posiciones del tablero que tengan fichas.
+      # Solo verificar jugadas posibles alrededor de casillas que tengan fichas
       if tablero[nroFila][nroColumna] != ' ':
-        # Intentar jugadas en cada posicion alrededor de la ficha.
+        # Intentar jugadas en cada posicion alrededor de la ficha:
         i = -1
         while i < 2 and not seEncontroJugadaPosible:
           j = -1
           while j < 2 and not seEncontroJugadaPosible:
-            # Sumando/restando al indice de la jugada del tablero para poder alcanzar las posiciones alrededor del mismo.
+            # Sumar/restar a los indices de la casilla para poder alcanzar las posiciones alrededor de la misma
             indiceDeLaFilaAVerificar = nroFila + i
             indiceDeLaColumnaAVerificar = nroColumna + j
             
-            # Verificando que las posiciones a comparar no se salgan de los parametros del tablero.
+            # Verificar que las posiciones a comparar no se salgan del rango de indices del tablero.
             seSaleDelTablero = indiceDeLaFilaAVerificar >= 8 or indiceDeLaFilaAVerificar < 0 or indiceDeLaColumnaAVerificar >= 8 or indiceDeLaColumnaAVerificar < 0
 
-            # Solo verificar si la jugada es posible en posiciones vacias.
+            # Solo verificar si la jugada es posible en posiciones vacias ya que no es posible colocar una ficha en una casilla ocupada
             if not seSaleDelTablero and tablero[indiceDeLaFilaAVerificar][indiceDeLaColumnaAVerificar] == ' ':
               letraColumna = chr(indiceDeLaColumnaAVerificar + ord('A')) # Convertir indice a letra
               jugada = (colorDelJugador, letraColumna + str(indiceDeLaFilaAVerificar + 1)) # Armar jugada para probar si hubiera sido valida
 
               # Intentar jugada
-              resultado = controlarJugadaValidas(tablero, jugada)
+              resultado = controlarJugadaValida(tablero, jugada)
               if resultado['jugadaValida']:
                 # Si la jugada es valida, se encontro una jugada que se podria haber realizado y lo reportamos como error
-                seEncontroJugadaPosible = True
                 resultado = {
                   'jugadaValida': False,
                   'color': colorDelJugador,
                   'error': f'Se podria haber colocado una ficha en la posicion {jugada[1]}.'
                 }
-              else: 
-                resultado
+                # Evitar seguir probando jugadas en otras casillas
+                seEncontroJugadaPosible = True
+
             j += 1
           i += 1
       nroColumna += 1
@@ -239,7 +239,7 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> di
       if not resultado['jugadaValida']:
         continue
 
-      resultado = controlarJugadaValidas(tablero, jugada)
+      resultado = controlarJugadaValida(tablero, jugada)
       if not resultado['jugadaValida']:
         continue
 
@@ -252,15 +252,15 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> di
 
     i += 1 
     
+  # Una vez terminados los movimientos ingresados por el usuario, si no se produjo ningun error, comprobar si la partida quedo sin terminar o no.
   resultado['partidaIncompleta'] = False
-
-  # Una vez terminados los movimientos ingresados por el usuario, comprobar si la partida quedo sin terminar o no.
   if resultado['jugadaValida']:
-    colorTurnoSiguiente = 'B' if color == 'N' else 'N'
+    colorTurnoSiguiente = 'N' if color == 'B' else 'B'
+    # Simular un salteo de jugada para saber si una jugada era posible
     resultado = controlarSalteoDeJugada(tablero, colorTurnoSiguiente)
-    # Si 'el caso de saltear' (parecido a terminar en cuanto a que no se mueven fichas porque no se puede) NO es una jugada valida,
-    # entonces es una partida incompleta.
+    
     if not resultado['jugadaValida']:
+      # Si esa simulacion da como resultado que es una jugada invalida, entonces es porque habia alguna jugada posible y, por lo tanto, la partida esta incompleta
       resultado['partidaIncompleta'] = True
     else:
       # Si saltear es una jugada valida, entonces la partida no esta incompleta.
@@ -274,17 +274,17 @@ def simularJuego(tablero: list[list[str]], jugadas: list[tuple[str, str]]) -> di
       'error': resultado['error']
     }
 
-
   return {
     'partidaValida': True
   }
 
-# Recibe el tablero y devuelve el color del jugador ganador, basado en la cantidad de fichas de cada color
+# Recibe el tablero y devuelve el color del jugador ganador (o indica que hubo empate si corresponde), basado en la cantidad de fichas de cada color
 # determinarGanador: List[List[String]] -> String
 def determinarGanador(tablero: list[list[str]]) -> str:
   fichasBlancas = 0
   fichasNegras = 0
 
+  # Contar fichas de cada color
   for linea in tablero:
     for casilla in linea:
       if casilla == 'B':
@@ -292,6 +292,7 @@ def determinarGanador(tablero: list[list[str]]) -> str:
       elif casilla == 'N':
         fichasNegras += 1
   
+  # Devolver resultado
   if fichasBlancas < fichasNegras:
     return 'N'
   elif fichasBlancas > fichasNegras:
@@ -319,12 +320,14 @@ def construirTableroInicial() -> list[list[str]]:
 # Muestra el tablero con el formato adecuado
 # imprimirTablero: List[List[String]] -> None
 def imprimirTablero(tablero: list[list[str]]) -> None:
-  print('  A B C D E F G H')
+  print('  | A B C D E F G H |')
+  print('--+-----------------+--')
   for i in range(8):
     nroFila = i + 1
     contenidoFila = ' '.join(tablero[i])
-    print(f'{nroFila} {contenidoFila} {nroFila}')
-  print('  A B C D E F G H')
+    print(f'{nroFila} | {contenidoFila} | {nroFila}')
+  print('--+-----------------+--')
+  print('  | A B C D E F G H |')
 
 # Punto de entrada del programa. Llama a las funciones para crea el tablero, leer la entrada del usuario y simular el juego. Si hay errores,
 # se le informa al usuario y se muestra el tablero anterior a esa jugada, si no, se muestra el tablero final con el ganador.
@@ -338,7 +341,6 @@ def main() -> None:
   else:
     tablero = construirTableroInicial()
 
-    
     resultado = simularJuego(tablero, jugadas)
 
     if resultado['partidaValida']:
@@ -354,9 +356,9 @@ def main() -> None:
       error = resultado['error']
 
       if resultado['partidaIncompleta']:
-        print(f'Partida incompleta. Era el turno de {turnoDeJugador} y aun habia movimientos posibles: {error}')
+        print(f'Partida incompleta. Era el turno de {turnoDeJugador} y aun habia uno o mas movimientos posibles: {error}')
       else:
-        print(f'Jugada invalida en el turno de {turnoDeJugador}: {error}')
+        print(f'Jugada invalida ejecutada por {turnoDeJugador}: {error}')
 
 # No ejecutar codigo al importar funciones desde este archivo
 if __name__ == '__main__':

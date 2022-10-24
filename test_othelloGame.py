@@ -115,12 +115,12 @@ def test_controlarJugadaRepetida():
     'error': f'La posicion {jugadaTres[1]} ya esta ocupada.'
   }
 
-def test_controlarJugadasValidas():
+def test_controlarJugadaValida():
   tablero = construirTableroInicial()
 
   # Ninguna ficha alrededor
   jugadaUno = ('B', 'A1')
-  assert controlarJugadaValidas(tablero, jugadaUno) == {
+  assert controlarJugadaValida(tablero, jugadaUno) == {
     'jugadaValida': False, 
     'color': jugadaUno[0], 
     'error': f'La posicion {jugadaUno[1]} no tiene ningua ficha del oponente alrededor.'
@@ -128,7 +128,7 @@ def test_controlarJugadasValidas():
 
   # Ficha aliada alrededor pero no enemiga
   jugadaDos = ('B', 'C3')
-  assert controlarJugadaValidas(tablero, jugadaDos) == {
+  assert controlarJugadaValida(tablero, jugadaDos) == {
     'jugadaValida': False, 
     'color': jugadaDos[0], 
     'error': f'La posicion {jugadaDos[1]} no tiene ningua ficha del oponente alrededor.'
@@ -136,7 +136,7 @@ def test_controlarJugadasValidas():
 
   # Ficha enemiga alrededor pero no encierra
   jugadaTres = ('B', 'C6')
-  assert controlarJugadaValidas(tablero, jugadaTres) == {
+  assert controlarJugadaValida(tablero, jugadaTres) == {
     'jugadaValida': False, 
     'color': jugadaTres[0], 
     'error': f'La posicion {jugadaTres[1]} no encierra fichas del oponente.'
@@ -144,7 +144,7 @@ def test_controlarJugadasValidas():
 
   # Ficha enemiga alrededor y encierra. Devuelve coordenadas de la ficha encerrada.
   jugada = ('B', 'C5')
-  assert controlarJugadaValidas(tablero, jugada) == {
+  assert controlarJugadaValida(tablero, jugada) == {
     'jugadaValida': True, 
     'fichasEncerradas': [(4, 3)]
   }

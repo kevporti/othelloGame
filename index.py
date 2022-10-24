@@ -88,7 +88,11 @@ def controlarJugadaRepetida(tablero: list[list[str]], jugada: tuple[str, str]) -
   (color, indiceDeLaFila, indiceDeLaColumna) = desestructurarJugada(jugada)
 
   if tablero[indiceDeLaFila][indiceDeLaColumna] != " ":
-    return {'jugadaValida': False, 'color': color, 'error': f'La posicion {jugada[1]} ya esta ocupada.'}
+    return {
+      'jugadaValida': False, 
+      'color': color, 
+      'error': f'La posicion {jugada[1]} ya esta ocupada.'
+    }
 
   return {
     'jugadaValida': True,
